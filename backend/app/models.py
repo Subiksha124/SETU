@@ -69,3 +69,4 @@ class IntakeResponse(BaseModel):
     menu_options: Optional[List[Dict[str, Any]]] = None
     is_complete: bool = False
     ready_for_confirmation: bool = False
+    matched_schemes: Optional[List[Dict[str, Any]]] = None

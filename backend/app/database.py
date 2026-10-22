@@ -90,24 +90,22 @@ def init_db():
 
     conn.commit()
 
-    # Seed schemes if table empty
-    cursor.execute("SELECT COUNT(*) FROM schemes")
-    if cursor.fetchone()[0] == 0:
-        for s in SCHEMES_SEED:
-            cursor.execute("""
-            INSERT INTO schemes (
-                scheme_id, name, name_ta, state, completed_class, income_limit,
-                categories, gender, benefit_amount, benefit_amount_ta, deadline,
-                documents, apply_steps, official_url, source_authority, last_verified, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                s["scheme_id"], s["name"], s.get("name_ta"), s["state"], s["completed_class"],
-                s["income_limit"], s["categories"], s["gender"], s["benefit_amount"],
-                s.get("benefit_amount_ta"), s["deadline"], json.dumps(s["documents"]),
-                json.dumps(s["apply_steps"]), s["official_url"], s["source_authority"],
-                s["last_verified"], s["status"]
-            ))
-        conn.commit()
+    # Seed or synchronize schemes with verified seed data
+    for s in SCHEMES_SEED:
+        cursor.execute("""
+        INSERT OR REPLACE INTO schemes (
+            scheme_id, name, name_ta, state, completed_class, income_limit,
+            categories, gender, benefit_amount, benefit_amount_ta, deadline,
+            documents, apply_steps, official_url, source_authority, last_verified, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            s["scheme_id"], s["name"], s.get("name_ta"), s["state"], s["completed_class"],
+            s["income_limit"], s["categories"], s["gender"], s["benefit_amount"],
+            s.get("benefit_amount_ta"), s["deadline"], json.dumps(s["documents"]),
+            json.dumps(s["apply_steps"]), s["official_url"], s["source_authority"],
+            s["last_verified"], s["status"]
+        ))
+    conn.commit()
 
     # Seed sample cases if empty
     cursor.execute("SELECT COUNT(*) FROM cases")
@@ -126,18 +124,16 @@ def init_db():
             ))
         conn.commit()
 
-    # Seed learning resources if empty
-    cursor.execute("SELECT COUNT(*) FROM learning_resources")
-    if cursor.fetchone()[0] == 0:
-        for r in LEARNING_RESOURCES_SEED:
-            cursor.execute("""
-            INSERT INTO learning_resources (
-                resource_id, title, title_ta, category, target_class, url, language, verified_by
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                r["resource_id"], r["title"], r.get("title_ta"), r["category"],
-                r["target_class"], r["url"], r["language"], r["verified_by"]
-            ))
-        conn.commit()
+    # Seed or synchronize learning resources
+    for r in LEARNING_RESOURCES_SEED:
+        cursor.execute("""
+        INSERT OR REPLACE INTO learning_resources (
+            resource_id, title, title_ta, category, target_class, url, language, verified_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            r["resource_id"], r["title"], r.get("title_ta"), r["category"],
+            r["target_class"], r["url"], r["language"], r["verified_by"]
+        ))
+    conn.commit()
 
     conn.close()

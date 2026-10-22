@@ -1,5 +1,6 @@
 import re
 from typing import Dict, Any, Tuple, List, Optional
+from .eligibility_agent import evaluate_eligibility
 
 # Active in-memory sessions: session_id -> { profile, history, step }
 _SESSIONS: Dict[str, Dict[str, Any]] = {}
@@ -118,6 +119,14 @@ def process_intake_message(session_id: str, message: Optional[str] = None, menu_
         elif step == "confirm":
             if menu_choice == 1:
                 profile["confirmed"] = True
+            elif menu_choice == 2:
+                profile["confirmed"] = False
+                profile["completed_class"] = None
+                session["step"] = "class"
+        elif menu_choice == 101:
+            profile["confirmed"] = False
+            profile["completed_class"] = None
+            session["step"] = "class"
 
     # Natural language parsing on message
     if text:
@@ -135,6 +144,10 @@ def process_intake_message(session_id: str, message: Optional[str] = None, menu_
             }
             session["step"] = "class"
             profile = session["profile"]
+
+        # Confirm intent when in confirmation step
+        if step == "confirm" and any(w in text.lower() for w in ["yes", "confirm", "correct", "right", "schemes", "sure", "ok", "fine", "ஆம்", "சரி"]):
+            profile["confirmed"] = True
 
         # Extract whatever is present in message
         c = parse_class(text)
@@ -212,8 +225,45 @@ def process_intake_message(session_id: str, message: Optional[str] = None, menu_
         next_q = "Select community category."
         next_q_ta = "சமூகப் பிரிவைத் தேர்ந்தெடுக்கவும்."
 
+    elif profile.get("confirmed"):
+        # Profile is fully confirmed -> execute eligibility and return matched schemes
+        session["step"] = "matched"
+        all_matches = evaluate_eligibility(profile)
+        eligible_schemes = [s for s in all_matches if s["eligible"]]
+        count = len(eligible_schemes)
+        reply = (
+            f"🎉 Profile confirmed! We evaluated your profile against all active government welfare schemes.\n\n"
+            f"You are eligible for {count} government scholarship scheme{'s' if count != 1 else ''}! "
+            f"Click any scheme below to visit its verified official portal directly or start your application guidance checklist."
+        )
+        reply_ta = (
+            f"🎉 உங்கள் விவரங்கள் உறுதிசெய்யப்பட்டன! மத்திய மற்றும் மாநில அரசின் திட்டங்களுடன் ஒப்பிட்டு சரிபார்க்கப்பட்டது.\n\n"
+            f"நீங்கள் {count} அரசு உதவித்தொகை திட்டங்களுக்கு தகுதி பெற்றுள்ளீர்கள்! "
+            f"அதிகாரப்பூர்வ இணையதளத்தை பார்வையிட அல்லது விண்ணப்ப வழிகாட்டலைத் தொடங்க கீழே உள்ள திட்டங்களைப் பயன்படுத்தவும்."
+        )
+        options = [
+            {"id": 100, "label": "📋 View Full Schemes Comparison", "label_ta": "📋 அனைத்து திட்டங்களையும் காண்க"},
+            {"id": 101, "label": "🔄 Edit Profile Details", "label_ta": "🔄 விவரங்களை மாற்றுக"}
+        ]
+        next_q = "Select a scheme to view details or visit official portal."
+        next_q_ta = "திட்டத்தை தேர்வு செய்து விவரங்களை அறியவும்."
+
+        return {
+            "session_id": session_id,
+            "reply": reply,
+            "reply_ta": reply_ta,
+            "profile": profile,
+            "missing_fields": [],
+            "next_question": next_q,
+            "next_question_ta": next_q_ta,
+            "menu_options": options,
+            "is_complete": True,
+            "ready_for_confirmation": False,
+            "matched_schemes": eligible_schemes
+        }
+
     else:
-        # All required fields are present
+        # All required fields are present but not yet confirmed
         session["step"] = "confirm"
         inc_formatted = f"₹ {profile['income']:,}" if profile.get('income') else "Not specified"
         reply = f"Great! Profile summary:\n• Education: Class {profile['completed_class']}\n• State: {profile['state']}\n• Gender: {profile['gender'].capitalize()}\n• Family Income: {inc_formatted}\n• Community: {profile['category']}\n\nIs this accurate?"
@@ -235,5 +285,6 @@ def process_intake_message(session_id: str, message: Optional[str] = None, menu_
         "next_question_ta": next_q_ta,
         "menu_options": options,
         "is_complete": len(missing) == 0,
-        "ready_for_confirmation": len(missing) == 0 and not profile.get("confirmed", False)
+        "ready_for_confirmation": len(missing) == 0 and not profile.get("confirmed", False),
+        "matched_schemes": None
     }

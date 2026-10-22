@@ -19,15 +19,15 @@ SCHEMES_SEED = [
             "Aadhaar Card"
         ],
         "apply_steps": [
-            "Visit the official Pudhumai Penn web portal (penkalvi.tn.gov.in)",
+            "Visit the official Pudhumai Penn portal (myscheme.gov.in/schemes/pudhumai-penn-scheme or penkalvi.tn.gov.in)",
             "Provide EMIS number (Education Management Information System) from your 12th school",
             "Upload Bonafide certificate from your recognized College / Polytechnic",
             "Submit bank account details verified via Aadhaar OTP",
             "College Nodal Officer verifies your submission online"
         ],
-        "official_url": "https://penkalvi.tn.gov.in",
+        "official_url": "https://www.myscheme.gov.in/schemes/pudhumai-penn-scheme",
         "source_authority": "Social Welfare & Women Empowerment Department, Government of Tamil Nadu",
-        "last_verified": "2026-10-15",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     },
     {
@@ -50,14 +50,14 @@ SCHEMES_SEED = [
             "Aadhaar Card & Bank Passbook (seeded with NPCI)"
         ],
         "apply_steps": [
-            "Apply via the Tamil Nadu e-Scholarship Portal or National Scholarship Portal",
+            "Visit the Tamil Nadu Post-Matric Scholarship portal (myscheme.gov.in/schemes/pmstn or bcmbcmw.tn.gov.in)",
             "Submit student profile with Community and Income certificate serial numbers",
             "Institution verifies records and forwards to District Welfare Officer",
             "Direct Benefit Transfer (DBT) credited to bank account"
         ],
-        "official_url": "https://bcmbcmw.tn.gov.in",
+        "official_url": "https://www.myscheme.gov.in/schemes/pmstn",
         "source_authority": "Backward Classes, Most Backward Classes and Minorities Welfare Department, Tamil Nadu",
-        "last_verified": "2026-10-18",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     },
     {
@@ -80,14 +80,14 @@ SCHEMES_SEED = [
             "Passport size photographs"
         ],
         "apply_steps": [
-            "Register on the Adi Dravidar and Tribal Welfare e-Scholarship portal",
+            "Visit the official SC/ST Post-Matric Scholarship portal (myscheme.gov.in/schemes/pmssc or adw.tn.gov.in)",
             "Upload digital copies of Community and Income certificates",
             "Institution verifies bonafide student status online",
-            "Disbursement processed by the District Adi Dravidar Welfare Office"
+            "Disbursement processed by the District Adi Dravidar Welfare Office via DBT"
         ],
-        "official_url": "https://adwscholarship.tn.gov.in",
+        "official_url": "https://www.myscheme.gov.in/schemes/pmssc",
         "source_authority": "Adi Dravidar and Tribal Welfare Department, Tamil Nadu",
-        "last_verified": "2026-10-17",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     },
     {
@@ -110,14 +110,14 @@ SCHEMES_SEED = [
             "Bank Passbook linked with Aadhaar"
         ],
         "apply_steps": [
-            "Register on National Scholarship Portal (scholarships.gov.in)",
-            "Select Department of School Education & Literacy schemes",
-            "Enter NMMS hall ticket number & verify marks",
+            "Visit the dedicated National Means-cum-Merit Scholarship portal (myscheme.gov.in/schemes/nmmss or dsel.education.gov.in/nmmss)",
+            "Register on National Scholarship Portal with OTR (One-Time Registration)",
+            "Enter NMMS selection exam roll number & verify marks",
             "School Headmaster verifies and submits to State Nodal Officer"
         ],
-        "official_url": "https://scholarships.gov.in",
+        "official_url": "https://www.myscheme.gov.in/schemes/nmmss",
         "source_authority": "Department of School Education & Literacy, Ministry of Education, Govt of India",
-        "last_verified": "2026-10-12",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     },
     {
@@ -140,14 +140,14 @@ SCHEMES_SEED = [
             "Aadhaar-seeded Bank Account Passbook"
         ],
         "apply_steps": [
-            "Visit National Scholarship Portal (NSP)",
-            "Apply under AICTE section -> Pragati Scholarship Scheme",
-            "Upload admission order and family income certificate",
+            "Visit the dedicated AICTE Pragati Scholarship portal (myscheme.gov.in/schemes/psgs-deg or aicte-india.org)",
+            "Apply via National Scholarship Portal under AICTE section -> Pragati Scholarship Scheme",
+            "Upload admission allotment order and family income certificate",
             "College institute verification followed by AICTE approval"
         ],
-        "official_url": "https://www.aicte-india.org/schemes/students-development-schemes/Pragati",
+        "official_url": "https://www.myscheme.gov.in/schemes/psgs-deg",
         "source_authority": "All India Council for Technical Education (AICTE)",
-        "last_verified": "2026-10-14",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     },
     {
@@ -170,15 +170,15 @@ SCHEMES_SEED = [
             "Bank Passbook"
         ],
         "apply_steps": [
-            "Apply on National Scholarship Portal (scholarships.gov.in)",
-            "Select Central Sector Scheme under Higher Education",
+            "Visit the Central Sector Scheme of Scholarship (CSSS) portal (myscheme.gov.in/schemes/csss-cus or education.gov.in)",
+            "Select Central Sector Scheme under Ministry of Education on National Scholarship Portal",
             "Provide 12th Roll Number to automatically check percentile eligibility",
             "College verifies regular enrollment",
             "Direct Benefit Transfer directly to student account"
         ],
-        "official_url": "https://scholarships.gov.in",
+        "official_url": "https://www.myscheme.gov.in/schemes/csss-cus",
         "source_authority": "Department of Higher Education, Ministry of Education, Govt of India",
-        "last_verified": "2026-10-10",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     },
     {
@@ -201,14 +201,14 @@ SCHEMES_SEED = [
             "Bank Account Details"
         ],
         "apply_steps": [
-            "Visit the nearest e-Sevai Center or Taluk Office (Social Security Scheme branch)",
+            "Visit the official Land Reforms & Uzhavar Pathukappu Thittam portal (landreforms.tn.gov.in/UPT.html) or nearest e-Sevai Center",
             "Submit application with father's/mother's Uzhavar Card number",
             "Village Administrative Officer (VAO) verifies farmer tenancy status",
             "Special Tahsildar sanctions the educational allowance"
         ],
-        "official_url": "https://www.tn.gov.in/scheme/data_view/6857",
+        "official_url": "https://www.landreforms.tn.gov.in/UPT.html",
         "source_authority": "Revenue and Disaster Management Department, Tamil Nadu",
-        "last_verified": "2026-10-16",
+        "last_verified": "2026-10-22",
         "status": "ACTIVE"
     }
 ]
@@ -314,11 +314,11 @@ LEARNING_RESOURCES_SEED = [
     },
     {
         "resource_id": "RES-03",
-        "title": "National Scholarship Portal (NSP) One-Time Registration (OTR) Tutorial",
-        "title_ta": "தேசிய கல்வி உதவித்தொகை தளம் (NSP) ஒருமுறை பதிவு வழிகாட்டி",
+        "title": "National Scholarship Portal (NSP) Student Portal & OTR Registration Guide",
+        "title_ta": "தேசிய கல்வி உதவித்தொகை தளம் (NSP) மாணவர் ஒருமுறை பதிவு (OTR) வழிகாட்டி",
         "category": "Scholarship",
         "target_class": "10th, 12th, College",
-        "url": "https://scholarships.gov.in",
+        "url": "https://scholarships.gov.in/Students",
         "language": "English",
         "verified_by": "National Informatics Centre"
     }

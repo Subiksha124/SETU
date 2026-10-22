@@ -37,7 +37,7 @@ export default function App() {
     async function init() {
       const all = await fetchAllSchemes()
       if (all && all.length > 0) {
-        // default evaluation with empty or sample profile
+        // default evaluation with sample profile
         const initialMatch = await matchSchemes({
           completed_class: 12,
           income: 180000,
@@ -78,6 +78,7 @@ export default function App() {
             profile={profile}
             setProfile={setProfile}
             setMatchedSchemes={setMatchedSchemes}
+            setSelectedScheme={setSelectedScheme}
             setTab={setTab}
             t={t}
             lang={lang}

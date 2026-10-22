@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { sendIntakeMessage, confirmProfile, matchSchemes } from '../api'
 
-export default function ChatIntake({ profile, setProfile, setMatchedSchemes, setTab, t, lang }) {
+export default function ChatIntake({ profile, setProfile, setMatchedSchemes, setSelectedScheme, setTab, t, lang }) {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [listening, setListening] = useState(false)
@@ -34,12 +34,17 @@ export default function ChatIntake({ profile, setProfile, setMatchedSchemes, set
         {
           sender: 'agent',
           text: lang === 'ta' ? res.reply_ta : res.reply,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          schemes: res.matched_schemes || []
         }
       ])
       setCurrentOptions(res.menu_options || [])
       setProfile(res.profile)
       setReadyToConfirm(res.ready_for_confirmation)
+      if (res.matched_schemes && res.matched_schemes.length > 0) {
+        setMatchedSchemes(res.matched_schemes)
+        if (setSelectedScheme) setSelectedScheme(res.matched_schemes[0])
+      }
     }
   }
 
@@ -109,16 +114,26 @@ export default function ChatIntake({ profile, setProfile, setMatchedSchemes, set
         {
           sender: 'agent',
           text: lang === 'ta' ? res.reply_ta : res.reply,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          schemes: res.matched_schemes || []
         }
       ])
       setCurrentOptions(res.menu_options || [])
       setProfile(res.profile)
       setReadyToConfirm(res.ready_for_confirmation)
+      if (res.matched_schemes && res.matched_schemes.length > 0) {
+        setMatchedSchemes(res.matched_schemes)
+        if (setSelectedScheme) setSelectedScheme(res.matched_schemes[0])
+      }
     }
   }
 
   async function handleOptionClick(opt) {
+    if (opt.id === 100) {
+      setTab('schemes')
+      return
+    }
+
     const userMsg = {
       sender: 'user',
       text: lang === 'ta' ? opt.label_ta : opt.label,
@@ -140,12 +155,17 @@ export default function ChatIntake({ profile, setProfile, setMatchedSchemes, set
         {
           sender: 'agent',
           text: lang === 'ta' ? res.reply_ta : res.reply,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          schemes: res.matched_schemes || []
         }
       ])
       setCurrentOptions(res.menu_options || [])
       setProfile(res.profile)
       setReadyToConfirm(res.ready_for_confirmation)
+      if (res.matched_schemes && res.matched_schemes.length > 0) {
+        setMatchedSchemes(res.matched_schemes)
+        if (setSelectedScheme) setSelectedScheme(res.matched_schemes[0])
+      }
     }
   }
 
@@ -156,7 +176,22 @@ export default function ChatIntake({ profile, setProfile, setMatchedSchemes, set
     setLoading(false)
 
     if (matchRes && matchRes.schemes) {
+      const eligible = matchRes.schemes.filter((s) => s.eligible)
       setMatchedSchemes(matchRes.schemes)
+      if (setSelectedScheme && eligible.length > 0) {
+        setSelectedScheme(eligible[0])
+      }
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: 'agent',
+          text: lang === 'ta'
+            ? `🎉 உங்கள் விவரங்கள் உறுதிசெய்யப்பட்டன! நீங்கள் ${eligible.length} அரசு உதவித்தொகை திட்டங்களுக்கு தகுதி பெற்றுள்ளீர்கள். கீழே உள்ள திட்டங்களை பார்வையிடலாம்:`
+            : `🎉 Profile confirmed! You are eligible for ${eligible.length} government scholarship scheme(s). You can explore each verified scheme below:`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          schemes: eligible
+        }
+      ])
       setTab('schemes')
     }
   }
@@ -196,7 +231,104 @@ export default function ChatIntake({ profile, setProfile, setMatchedSchemes, set
           <div className="chat-body">
             {messages.map((m, idx) => (
               <div key={idx} className={`bubble ${m.sender}`}>
-                <p>{m.text}</p>
+                <p style={{ whiteSpace: 'pre-line' }}>{m.text}</p>
+
+                {/* Matched Schemes Cards inside Chat Bubble */}
+                {m.schemes && m.schemes.length > 0 && (
+                  <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1E40AF', background: '#DBEAFE', padding: '4px 10px', borderRadius: '6px' }}>
+                      🎓 {lang === 'ta' ? 'உங்களுக்கான உதவித்தொகை திட்டங்கள்' : 'Matched Government Schemes for You'} ({m.schemes.length})
+                    </div>
+                    {m.schemes.map((scheme) => (
+                      <div
+                        key={scheme.scheme_id}
+                        style={{
+                          background: '#FFFFFF',
+                          border: '1.5px solid #CBD5E1',
+                          borderRadius: '10px',
+                          padding: '12px',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                          color: '#1E293B',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                          <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#1E293B', margin: 0, lineHeight: 1.3 }}>
+                            {lang === 'ta' && scheme.name_ta ? scheme.name_ta : scheme.name}
+                          </h4>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                            ✓ {lang === 'ta' ? 'தகுதி' : 'Eligible'}
+                          </span>
+                        </div>
+                        
+                        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#047857', marginTop: '6px' }}>
+                          💰 {lang === 'ta' && scheme.benefit_amount_ta ? scheme.benefit_amount_ta : scheme.benefit_amount}
+                        </div>
+                        
+                        <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '3px' }}>
+                          🏛️ {scheme.source_authority}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                          <a
+                            href={scheme.official_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              flex: 1,
+                              minWidth: '130px',
+                              textAlign: 'center',
+                              background: '#F8FAFC',
+                              color: '#334155',
+                              border: '1px solid #CBD5E1',
+                              padding: '7px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.78rem',
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            <span>🌐</span>
+                            <span>{lang === 'ta' ? 'அதிகாரப்பூர்வ தளம்' : 'Official Portal'} ↗</span>
+                          </a>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (setSelectedScheme) setSelectedScheme(scheme)
+                              setTab('tracker')
+                            }}
+                            style={{
+                              flex: 1,
+                              minWidth: '130px',
+                              textAlign: 'center',
+                              background: '#2563EB',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              padding: '7px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.78rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            <span>📑</span>
+                            <span>{lang === 'ta' ? 'விண்ணப்பிக்கவும்' : 'Apply / Track'} →</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="bubble-time">{m.time}</div>
               </div>
             ))}

@@ -1,5 +1,10 @@
 import pytest
 from app.agents.intake_agent import process_intake_message, parse_income, parse_class
+from app.database import init_db
+
+@pytest.fixture(autouse=True)
+def setup_database():
+    init_db()
 
 def test_parse_income():
     assert parse_income("Our annual income is 1.5 lakhs") == 150000
@@ -35,3 +40,21 @@ def test_intake_flow_step_by_step():
     assert r4["profile"]["category"] == "BC"
     assert r4["is_complete"] is True
     assert r4["ready_for_confirmation"] is True
+
+def test_intake_confirmation_returns_matched_schemes_with_specific_urls():
+    session_id = "test-session-confirm"
+    process_intake_message(session_id=session_id, menu_choice=3)  # 12th
+    process_intake_message(session_id=session_id, menu_choice=1)  # female
+    process_intake_message(session_id=session_id, menu_choice=2)  # 1.8L
+    process_intake_message(session_id=session_id, menu_choice=1)  # BC
+    
+    # Step 5: Confirm profile
+    r_confirm = process_intake_message(session_id=session_id, menu_choice=1)
+    assert r_confirm["matched_schemes"] is not None
+    assert len(r_confirm["matched_schemes"]) > 0
+    
+    # Verify each scheme has a valid specific official_url
+    for s in r_confirm["matched_schemes"]:
+        assert s["official_url"].startswith("https://")
+        # Ensure not generic unrouted NSP homepage
+        assert s["official_url"] != "https://scholarships.gov.in"
